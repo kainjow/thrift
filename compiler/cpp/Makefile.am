@@ -21,7 +21,7 @@
 # Please see doc/old-thrift-license.txt in the Thrift distribution for
 # details.
 
-AUTOMAKE_OPTIONS = subdir-objects
+AUTOMAKE_OPTIONS = subdir-objects nostdinc
 
 # Note on why we have src/thrift and src/thrift/plugin directories:
 # Since Automake supports only one set of BUILT_SOURCES per file and does not allow

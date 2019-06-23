@@ -1,5 +1,30 @@
 [
   {
+    "name": "cocoa",
+    "platforms": [
+      "Darwin"
+    ]
+    "server": {
+      "command": [
+        "test_server",
+      ],
+      "protocols": [
+        "binary",
+      ]
+    },
+    "transports": [
+      "buffered",
+      "framed"
+    ],
+    "sockets": [
+      "domain"
+    ],
+    "protocols": [
+      "binary",
+    ],
+    "workdir": "cocoa"
+  },
+  {
     "name": "c_glib",
     "platforms": [
       "Linux"

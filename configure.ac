@@ -122,6 +122,7 @@ if test "$enable_libs" = "no"; then
   with_cpp="no"
   with_c_glib="no"
   with_cl="no"
+  with_cocoa="no"
   with_java="no"
   with_csharp="no"
   with_python="no"
@@ -212,6 +213,13 @@ if test "$have_cpp" = "yes" -o "$have_c_glib" = "yes";  then
   echo "Have cpp or c so we check for OpenSSL"
   AX_CHECK_OPENSSL()
 fi
+
+AX_THRIFT_LIB(cocoa, [Cocoa], yes)
+if test "$with_cocoa" = "yes"; then
+  AC_PROG_OBJC
+  have_cocoa="yes"
+fi
+AM_CONDITIONAL(WITH_COCOA, [test "$have_cocoa" = "yes"])
 
 AX_THRIFT_LIB(csharp, [C#], yes)
 if test "$with_csharp" = "yes";  then
@@ -858,6 +866,7 @@ AC_CONFIG_FILES([
   test/c_glib/Makefile
   test/cl/Makefile
   test/cpp/Makefile
+  test/cocoa/Makefile
   test/csharp/Makefile
   test/erl/Makefile
   test/go/Makefile
@@ -897,6 +906,8 @@ if test "$have_cpp" = "yes" ; then MAYBE_CPP="cpp" ; else MAYBE_CPP="" ; fi
 AC_SUBST([MAYBE_CPP])
 if test "$have_c_glib" = "yes" ; then MAYBE_C_GLIB="c_glib" ; else MAYBE_C_GLIB="" ; fi
 AC_SUBST([MAYBE_C_GLIB])
+if test "$have_cocoa" = "yes" ; then MAYBE_COCOA="cocoa" ; else MAYBE_COCOA="" ; fi
+AC_SUBST([MAYBE_COCOA])
 if test "$have_d" = "yes" -a "$have_deimos_event2" = "yes" -a "$have_deimos_openssl" = "yes"; then MAYBE_D="d" ; else MAYBE_D="" ; fi
 AC_SUBST([MAYBE_D])
 if test "$have_java" = "yes" ; then MAYBE_JAVA="java" ; else MAYBE_JAVA="" ; fi
@@ -944,6 +955,7 @@ echo "Building C (GLib) Library .... : $have_c_glib"
 echo "Building C# (Mono) Library ... : $have_csharp"
 echo "Building C++ Library ......... : $have_cpp"
 echo "Building Common Lisp Library.. : $have_cl"
+echo "Building Cocoa Library........ : $have_cocoa"
 echo "Building D Library ........... : $have_d"
 echo "Building Dart Library ........ : $have_dart"
 echo "Building dotnetcore Library .. : $have_dotnetcore"

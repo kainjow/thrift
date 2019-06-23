@@ -35,6 +35,11 @@ SUBDIRS += csharp
 PRECROSS_TARGET += precross-csharp
 endif
 
+if WITH_COCOA
+SUBDIRS += cocoa
+PRECROSS_TARGET += precross-cocoa
+endif
+
 if WITH_CPP
 SUBDIRS += cpp
 PRECROSS_TARGET += precross-cpp
@@ -116,6 +121,7 @@ EXTRA_DIST = \
 	keys \
 	c_glib \
 	cl \
+	cocoa \
 	cpp \
 	dart \
 	erl \

@@ -3,13 +3,13 @@
     "name": "cocoa",
     "platforms": [
       "Darwin"
-    ]
+    ],
     "server": {
       "command": [
-        "test_server",
+        "test_server"
       ],
       "protocols": [
-        "binary",
+        "binary"
       ]
     },
     "transports": [
@@ -20,7 +20,7 @@
       "domain"
     ],
     "protocols": [
-      "binary",
+      "binary"
     ],
     "workdir": "cocoa"
   },

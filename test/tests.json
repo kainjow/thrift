@@ -6,7 +6,7 @@
     ],
     "server": {
       "command": [
-        "test_server"
+        "TestServer"
       ],
       "protocols": [
         "binary"
@@ -17,7 +17,7 @@
       "framed"
     ],
     "sockets": [
-      "domain"
+      "ip"
     ],
     "protocols": [
       "binary"

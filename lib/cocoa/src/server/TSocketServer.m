@@ -221,7 +221,7 @@ NSString *const TSockerServerTransportKey = @"TSockerServerTransport";
 
     for (;;) {
         @autoreleasepool {
-            NSError *error;
+            NSError *error = nil;
             if (![processor processOnInputProtocol:inProtocol outputProtocol:outProtocol error:&error]) {
                 NSLog(@"Error processing request: %@", error);
                 break;

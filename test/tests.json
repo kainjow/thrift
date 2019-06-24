@@ -27,7 +27,8 @@
   {
     "name": "c_glib",
     "platforms": [
-      "Linux"
+      "Linux",
+      "Darwin"
     ],
     "server": {
       "command": [

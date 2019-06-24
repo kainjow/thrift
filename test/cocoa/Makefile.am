@@ -28,6 +28,7 @@ TestServer_SOURCES = \
 	gen-cocoa/ThriftTestThriftTest.m \
 	$(top_srcdir)/lib/cocoa/src/TApplicationError.m \
 	$(top_srcdir)/lib/cocoa/src/TBaseClient.m \
+	$(top_srcdir)/lib/cocoa/src/TError.m \
 	$(top_srcdir)/lib/cocoa/src/TSharedProcessorFactory.m \
 	$(top_srcdir)/lib/cocoa/src/protocol/TBinaryProtocol.m \
 	$(top_srcdir)/lib/cocoa/src/protocol/TProtocolError.m \

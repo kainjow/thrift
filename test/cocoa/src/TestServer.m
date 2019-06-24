@@ -32,92 +32,121 @@
 @implementation Service
 
 - (BOOL) testVoid: (NSError *__autoreleasing *)__thriftError {
+	NSLog(@"%s", __PRETTY_FUNCTION__);
 	printf("testVoid()\n");
 	return YES;
 }
 
 - (NSString *) testString: (NSString *) thing error: (NSError *__autoreleasing *)__thriftError {
-	return nil;
+	NSLog(@"%s", __PRETTY_FUNCTION__);
+	return thing;
 }
 
 - (NSNumber *) testBool: (BOOL) thing error: (NSError *__autoreleasing *)__thriftError {
-	return nil;
+	NSLog(@"%s", __PRETTY_FUNCTION__);
+	return @(thing);
 }
 
 - (NSNumber *) testByte: (SInt8) thing error: (NSError *__autoreleasing *)__thriftError {
-	return nil;
+	NSLog(@"%s", __PRETTY_FUNCTION__);
+	return @(thing);
 }
 
 - (NSNumber *) testI32: (SInt32) thing error: (NSError *__autoreleasing *)__thriftError {
-	return nil;
+	NSLog(@"%s", __PRETTY_FUNCTION__);
+	return @(thing);
 }
 
 - (NSNumber *) testI64: (SInt64) thing error: (NSError *__autoreleasing *)__thriftError {
-	return nil;
+	NSLog(@"%s", __PRETTY_FUNCTION__);
+	return @(thing);
 }
 
 - (NSNumber *) testDouble: (double) thing error: (NSError *__autoreleasing *)__thriftError {
-	return nil;
+	NSLog(@"%s", __PRETTY_FUNCTION__);
+	return @(thing);
 }
 
 - (NSData *) testBinary: (NSData *) thing error: (NSError *__autoreleasing *)__thriftError {
-	return nil;
+	NSLog(@"%s", __PRETTY_FUNCTION__);
+	return thing;
 }
 
 - (ThriftTestXtruct *) testStruct: (ThriftTestXtruct *) thing error: (NSError *__autoreleasing *)__thriftError {
-	return nil;
+	NSLog(@"%s", __PRETTY_FUNCTION__);
+	return thing;
 }
 
 - (ThriftTestXtruct2 *) testNest: (ThriftTestXtruct2 *) thing error: (NSError *__autoreleasing *)__thriftError {
-	return nil;
+	NSLog(@"%s", __PRETTY_FUNCTION__);
+	return thing;
 }
 
 - (NSDictionary<NSNumber *, NSNumber *> *) testMap: (NSDictionary<NSNumber *, NSNumber *> *) thing error: (NSError *__autoreleasing *)__thriftError {
-	return nil;
+	NSLog(@"%s", __PRETTY_FUNCTION__);
+	return thing;
 }
 
 - (NSDictionary<NSString *, NSString *> *) testStringMap: (NSDictionary<NSString *, NSString *> *) thing error: (NSError *__autoreleasing *)__thriftError {
-	return nil;
+	NSLog(@"%s", __PRETTY_FUNCTION__);
+	return thing;
 }
 
 - (NSSet<NSNumber *> *) testSet: (NSSet<NSNumber *> *) thing error: (NSError *__autoreleasing *)__thriftError {
-	return nil;
+	NSLog(@"%s", __PRETTY_FUNCTION__);
+	return thing;
 }
 
 - (NSArray<NSNumber *> *) testList: (NSArray<NSNumber *> *) thing error: (NSError *__autoreleasing *)__thriftError {
-	return nil;
+	NSLog(@"%s", __PRETTY_FUNCTION__);
+	return thing;
 }
 
 - (NSNumber *) testEnum: (ThriftTestNumberz) thing error: (NSError *__autoreleasing *)__thriftError {
-	return nil;
+	NSLog(@"%s", __PRETTY_FUNCTION__);
+	return @(thing);
 }
 
 - (NSNumber *) testTypedef: (ThriftTestUserId) thing error: (NSError *__autoreleasing *)__thriftError {
-	return nil;
+	NSLog(@"%s", __PRETTY_FUNCTION__);
+	return @(thing);
 }
 
 - (NSDictionary<NSNumber *, NSDictionary<NSNumber *, NSNumber *> *> *) testMapMap: (SInt32) hello error: (NSError *__autoreleasing *)__thriftError {
-	return nil;
+	NSLog(@"%s", __PRETTY_FUNCTION__);
+	NSMutableDictionary<NSNumber *, NSDictionary *> *result = @{};//@{-4 => {-4 => -4, -3 => -3, -2 => -2, -1 => -1, }, 4 => {1 => 1, 2 => 2, 3 => 3, 4 => 4, }, }
+	return result;
 }
 
 - (NSDictionary<NSNumber *, NSDictionary<NSNumber *, ThriftTestInsanity *> *> *) testInsanity: (ThriftTestInsanity *) argument error: (NSError *__autoreleasing *)__thriftError {
-	return nil;
+	NSLog(@"%s", __PRETTY_FUNCTION__);
+	return @{};
 }
 
 - (ThriftTestXtruct *) testMulti: (SInt8) arg0 arg1: (SInt32) arg1 arg2: (SInt64) arg2 arg3: (NSDictionary<NSNumber *, NSString *> *) arg3 arg4: (ThriftTestNumberz) arg4 arg5: (ThriftTestUserId) arg5 error: (NSError *__autoreleasing *)__thriftError {
-	return nil;
+	NSLog(@"%s", __PRETTY_FUNCTION__);
+	return [[ThriftTestXtruct alloc] initWithString_thing:@"Hello2" byte_thing:arg0 i32_thing:arg1 i64_thing:arg2];
 }
 
 - (BOOL) testException: (NSString *) arg error: (NSError *__autoreleasing *)__thriftError {
+	NSLog(@"%s", __PRETTY_FUNCTION__);
+	if ([arg isEqualToString:@"Xception"]) {
+		*__thriftError = [[ThriftTestXception alloc] initWithErrorCode:1001 message:arg];
+	} else if ([arg isEqualToString:@"TException"]) {
+		*__thriftError = [NSError errorWithDomain:TErrorDomain code:1001 userInfo:nil];
+	}
 	return NO;
 }
 
 - (ThriftTestXtruct *) testMultiException: (NSString *) arg0 arg1: (NSString *) arg1 error: (NSError *__autoreleasing *)__thriftError {
-	return nil;
+	NSLog(@"%s", __PRETTY_FUNCTION__);
+	return [[ThriftTestXtruct alloc] initWithString_thing:arg1 byte_thing:0 i32_thing:0 i64_thing:0];
 }
 
 - (BOOL) testOneway: (SInt32) secondsToSleep error: (NSError *__autoreleasing *)__thriftError {
-	return NO;
+	NSLog(@"%s", __PRETTY_FUNCTION__);
+	sleep(secondsToSleep);
+	return YES;
 }
 
 @end

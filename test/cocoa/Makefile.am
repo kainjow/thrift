@@ -25,25 +25,25 @@ check_PROGRAMS = \
 
 TestServer_SOURCES = \
 	src/TestServer.m \
-	gen-cocoa/ThriftTestThriftTest.m
+	gen-cocoa/ThriftTestThriftTest.m \
+	$(top_srcdir)/lib/cocoa/src/TApplicationError.m \
+	$(top_srcdir)/lib/cocoa/src/TBaseClient.m \
+	$(top_srcdir)/lib/cocoa/src/protocol/TProtocolError.m \
+	$(top_srcdir)/lib/cocoa/src/protocol/TProtocolUtil.m
 
-#test_server_LDADD = \
-#	libtestcglib.la \
-#	$(top_builddir)/lib/c_glib/libthrift_c_glib.la
-
-#
-# Common thrift code generation rules
-#
 gen-cocoa/ThriftTestThriftTest.m gen-cocoa/ThriftTestThriftTest.h: $(top_srcdir)/test/ThriftTest.thrift $(THRIFT)
 	$(THRIFT) --gen cocoa -r $<
 
-AM_CFLAGS = -g -Wall -Wextra
-AM_CXXFLAGS = $(AM_CFLAGS)
-AM_CPPFLAGS = -I$(top_srcdir)/lib/cocoa/src -Igen-cocoa
-AM_LDFLAGS = @GCOV_LDFLAGS@
+AM_CPPFLAGS = -Wall -Wextra \
+	-Igen-cocoa \
+	-I$(top_srcdir)/lib/cocoa/src \
+	-I$(top_srcdir)/lib/cocoa/src/protocol \
+	-I$(top_srcdir)/lib/cocoa/src/server \
+	-I$(top_srcdir)/lib/cocoa/src/transport
+
+AM_LDFLAGS = \
+	-framework Foundation \
+	@GCOV_LDFLAGS@
 
 clean-local:
 	$(RM) gen-cocoa/*
-
-EXTRA_DIST = \
-	src/TestServer.m

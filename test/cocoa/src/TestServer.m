@@ -17,46 +17,13 @@
  * under the License.
  */
 
-#import <Foundation/Foundation.h>
 #import "TSocketServer.h"
 #import "TSharedProcessorFactory.h"
 #import "TBinaryProtocol.h"
 
-#import <getopt.h>
-
-#if 0
-#include <thrift/c_glib/protocol/thrift_compact_protocol_factory.h>
-#include <thrift/c_glib/transport/thrift_buffered_transport.h>
-#include <thrift/c_glib/transport/thrift_buffered_transport_factory.h>
-#include <thrift/c_glib/transport/thrift_framed_transport.h>
-#include <thrift/c_glib/transport/thrift_framed_transport_factory.h>
-#endif
-
 #include "../gen-cocoa/ThriftTestThriftTest.h"
 
-#if 0
-/* Our server object, declared globally so it is accessible within the SIGINT
-   signal handler */
-ThriftServer *server = NULL;
-
-/* A flag that indicates whether the server was interrupted with SIGINT
-   (i.e. Ctrl-C) so we can tell whether its termination was abnormal */
-gboolean sigint_received = FALSE;
-
-/* Handle SIGINT ("Ctrl-C") signals by gracefully stopping the server */
-static void
-sigint_handler (int signal_number)
-{
-  THRIFT_UNUSED_VAR (signal_number);
-
-  /* Take note we were called */
-  sigint_received = TRUE;
-
-  /* Shut down the server gracefully */
-  if (server != NULL)
-    thrift_server_stop (server);
-}
-#endif
+#import <getopt.h>
 
 @interface Service : NSObject <ThriftTestThriftTest>
 

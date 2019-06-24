@@ -17,30 +17,22 @@
  * under the License.
  */
 
-#include <Foundation/Foundation.h>
+#import <Foundation/Foundation.h>
+#import "TSocketServer.h"
+#import "TSharedProcessorFactory.h"
+#import "TBinaryProtocol.h"
+
+#import <getopt.h>
 
 #if 0
-#include <thrift/c_glib/thrift.h>
-#include <thrift/c_glib/processor/thrift_multiplexed_processor.h>
-#include <thrift/c_glib/protocol/thrift_binary_protocol_factory.h>
 #include <thrift/c_glib/protocol/thrift_compact_protocol_factory.h>
-#include <thrift/c_glib/server/thrift_server.h>
-#include <thrift/c_glib/server/thrift_simple_server.h>
 #include <thrift/c_glib/transport/thrift_buffered_transport.h>
 #include <thrift/c_glib/transport/thrift_buffered_transport_factory.h>
 #include <thrift/c_glib/transport/thrift_framed_transport.h>
 #include <thrift/c_glib/transport/thrift_framed_transport_factory.h>
-#include <thrift/c_glib/transport/thrift_server_socket.h>
-#include <thrift/c_glib/transport/thrift_server_transport.h>
-#include <thrift/c_glib/transport/thrift_transport.h>
-#include <thrift/c_glib/transport/thrift_transport_factory.h>
-
-#include "../gen-c_glib/t_test_thrift_test.h"
-#include "../gen-c_glib/t_test_second_service.h"
-
-#include "thrift_test_handler.h"
-#include "thrift_second_service_handler.h"
 #endif
+
+#include "../gen-cocoa/ThriftTestThriftTest.h"
 
 #if 0
 /* Our server object, declared globally so it is accessible within the SIGINT
@@ -66,228 +58,197 @@ sigint_handler (int signal_number)
 }
 #endif
 
-int
-main (int argc, char **argv)
-{
-#if 0
-  static gint   port = 9090;
-  static gchar *server_type_option = NULL;
-  static gchar *transport_option = NULL;
-  static gchar *protocol_option = NULL;
-  static gint   string_limit = 0;
-  static gint   container_limit = 0;
+@interface Service : NSObject <ThriftTestThriftTest>
 
-  static
-    GOptionEntry option_entries[] = {
-    { "port",            0, 0, G_OPTION_ARG_INT,      &port,
-      "Port number to connect (=9090)", NULL },
-    { "server-type",     0, 0, G_OPTION_ARG_STRING,   &server_type_option,
-      "Type of server: simple (=simple)", NULL },
-    { "transport",       0, 0, G_OPTION_ARG_STRING,   &transport_option,
-      "Transport: buffered, framed (=buffered)", NULL },
-    { "protocol",        0, 0, G_OPTION_ARG_STRING,   &protocol_option,
-      "Protocol: binary, compact (=binary)", NULL },
-    { "string-limit",    0, 0, G_OPTION_ARG_INT,      &string_limit,
-      "Max string length (=none)", NULL },
-    { "container-limit", 0, 0, G_OPTION_ARG_INT,      &container_limit,
-      "Max container length (=none)", NULL },
-    { NULL }
-  };
+@end
 
-  gchar *server_name            = "simple";
-  gchar *transport_name         = "buffered";
-  GType  transport_factory_type = THRIFT_TYPE_BUFFERED_TRANSPORT_FACTORY;
-  gchar *protocol_name          = "binary";
-  GType  protocol_factory_type  = THRIFT_TYPE_BINARY_PROTOCOL_FACTORY;
+@implementation Service
 
-  TTestThriftTestHandler *handler;
-  TTestThriftTestHandler *handler_second_service = NULL;
-  ThriftProcessor        *processor;
-  ThriftProcessor        *processor_test = NULL;
-  ThriftProcessor        *processor_second_service = NULL;
-  ThriftServerTransport  *server_transport;
-  ThriftTransportFactory *transport_factory;
-  ThriftProtocolFactory  *protocol_factory;
+- (BOOL) testVoid: (NSError *__autoreleasing *)__thriftError {
+	printf("testVoid()\n");
+	return YES;
+}
 
-  struct sigaction sigint_action;
+- (NSString *) testString: (NSString *) thing error: (NSError *__autoreleasing *)__thriftError {
+	return nil;
+}
 
-  GOptionContext *option_context;
-  gboolean        options_valid = TRUE;
+- (NSNumber *) testBool: (BOOL) thing error: (NSError *__autoreleasing *)__thriftError {
+	return nil;
+}
 
-  GError *error = NULL;
+- (NSNumber *) testByte: (SInt8) thing error: (NSError *__autoreleasing *)__thriftError {
+	return nil;
+}
 
-#if (!GLIB_CHECK_VERSION (2, 36, 0))
-  g_type_init ();
-#endif
+- (NSNumber *) testI32: (SInt32) thing error: (NSError *__autoreleasing *)__thriftError {
+	return nil;
+}
 
-  /* Configure and parse our command-line options */
-  option_context = g_option_context_new (NULL);
-  g_option_context_add_main_entries (option_context,
-                                     option_entries,
-                                     NULL);
-  if (g_option_context_parse (option_context,
-                              &argc,
-                              &argv,
-                              &error) == FALSE) {
-    fprintf (stderr, "%s\n", error->message);
-    return 255;
-  }
-  g_option_context_free (option_context);
+- (NSNumber *) testI64: (SInt64) thing error: (NSError *__autoreleasing *)__thriftError {
+	return nil;
+}
 
-  /* Validate the parsed options */
-  if (server_type_option != NULL &&
-      strncmp (server_type_option, "simple", 7) != 0) {
-    fprintf (stderr, "Unknown server type %s\n", protocol_option);
-    options_valid = FALSE;
-  }
+- (NSNumber *) testDouble: (double) thing error: (NSError *__autoreleasing *)__thriftError {
+	return nil;
+}
 
-  if (protocol_option != NULL) {
-    if (strncmp (protocol_option, "compact", 8) == 0) {
-      protocol_factory_type = THRIFT_TYPE_COMPACT_PROTOCOL_FACTORY;
-      protocol_name = "compact";
-    }
-    else if (strncmp (protocol_option, "multi", 6) == 0) {
-	protocol_name = "binary:multi";
-    }
-    else if (strncmp (protocol_option, "multic", 7) == 0) {
-	protocol_factory_type = THRIFT_TYPE_COMPACT_PROTOCOL_FACTORY;
-	protocol_name = "compact:multic";
-    }
-    else if (strncmp (protocol_option, "binary", 7) != 0) {
-      fprintf (stderr, "Unknown protocol type %s\n", protocol_option);
-      options_valid = FALSE;
-    }
-  }
+- (NSData *) testBinary: (NSData *) thing error: (NSError *__autoreleasing *)__thriftError {
+	return nil;
+}
 
-  if (transport_option != NULL) {
-    if (strncmp (transport_option, "framed", 7) == 0) {
-      transport_factory_type = THRIFT_TYPE_FRAMED_TRANSPORT_FACTORY;
-      transport_name = "framed";
-    }
-    else if (strncmp (transport_option, "buffered", 9) != 0) {
-      fprintf (stderr, "Unknown transport type %s\n", transport_option);
-      options_valid = FALSE;
-    }
-  }
+- (ThriftTestXtruct *) testStruct: (ThriftTestXtruct *) thing error: (NSError *__autoreleasing *)__thriftError {
+	return nil;
+}
 
-  if (!options_valid)
-    return 254;
+- (ThriftTestXtruct2 *) testNest: (ThriftTestXtruct2 *) thing error: (NSError *__autoreleasing *)__thriftError {
+	return nil;
+}
 
-  /* Establish all our connection objects */
-  handler           = g_object_new (TYPE_THRIFT_TEST_HANDLER,
-                                    NULL);
+- (NSDictionary<NSNumber *, NSNumber *> *) testMap: (NSDictionary<NSNumber *, NSNumber *> *) thing error: (NSError *__autoreleasing *)__thriftError {
+	return nil;
+}
 
+- (NSDictionary<NSString *, NSString *> *) testStringMap: (NSDictionary<NSString *, NSString *> *) thing error: (NSError *__autoreleasing *)__thriftError {
+	return nil;
+}
 
+- (NSSet<NSNumber *> *) testSet: (NSSet<NSNumber *> *) thing error: (NSError *__autoreleasing *)__thriftError {
+	return nil;
+}
 
-  if(strstr(protocol_name, ":multi")){
-      /* When a multiplexed processor is involved the handler is not
-         registered as usual. We create the processor and the real
-         processor is registered. Multiple processors can be registered
-         at once. This is why we don't have a constructor property */
-      processor = g_object_new (THRIFT_TYPE_MULTIPLEXED_PROCESSOR,
-					 NULL);
+- (NSArray<NSNumber *> *) testList: (NSArray<NSNumber *> *) thing error: (NSError *__autoreleasing *)__thriftError {
+	return nil;
+}
 
-      handler_second_service = g_object_new (TYPE_SECOND_SERVICE_HANDLER,
-     	                                    NULL);
+- (NSNumber *) testEnum: (ThriftTestNumberz) thing error: (NSError *__autoreleasing *)__thriftError {
+	return nil;
+}
 
-      processor_test = g_object_new (T_TEST_TYPE_THRIFT_TEST_PROCESSOR,
-				    "handler", handler,
-				    NULL);
-      processor_second_service =   g_object_new (T_TEST_TYPE_SECOND_SERVICE_PROCESSOR,
-				    "handler", handler_second_service,
-				    NULL);
+- (NSNumber *) testTypedef: (ThriftTestUserId) thing error: (NSError *__autoreleasing *)__thriftError {
+	return nil;
+}
 
-      /* We register a test processor with Multiplexed name ThriftTest */
-      if(!thrift_multiplexed_processor_register_processor(processor,
-						      "ThriftTest", processor_test,
-						      &error)){
-	    g_message ("thrift_server_serve: %s",
-	               error != NULL ? error->message : "(null)");
-	    g_clear_error (&error);
-      }
-      /* We register a second test processor with Multiplexed name SecondService
-       * we are responsible of freeing the processor when it's not used anymore */
-      if(!thrift_multiplexed_processor_register_processor(processor,
-						      "SecondService", processor_second_service,
-						      &error)){
-	    g_message ("thrift_server_serve: %s",
-	               error != NULL ? error->message : "(null)");
-	    g_clear_error (&error);
-      }
+- (NSDictionary<NSNumber *, NSDictionary<NSNumber *, NSNumber *> *> *) testMapMap: (SInt32) hello error: (NSError *__autoreleasing *)__thriftError {
+	return nil;
+}
 
-  }else{
-      processor = g_object_new (T_TEST_TYPE_THRIFT_TEST_PROCESSOR,
-                                        "handler", handler,
-                                        NULL);
-  }
-  server_transport  = g_object_new (THRIFT_TYPE_SERVER_SOCKET,
-                                    "port", port,
-                                    NULL);
-  transport_factory = g_object_new (transport_factory_type,
-                                    NULL);
+- (NSDictionary<NSNumber *, NSDictionary<NSNumber *, ThriftTestInsanity *> *> *) testInsanity: (ThriftTestInsanity *) argument error: (NSError *__autoreleasing *)__thriftError {
+	return nil;
+}
 
-  if (strstr (protocol_name, "compact") != NULL) {
-    protocol_factory  = g_object_new (protocol_factory_type,
-                                      "string_limit", string_limit,
-                                      "container_limit", container_limit,
-                                      NULL);
-  } else {
-    protocol_factory  = g_object_new (protocol_factory_type,
-                                      NULL);
-  }
+- (ThriftTestXtruct *) testMulti: (SInt8) arg0 arg1: (SInt32) arg1 arg2: (SInt64) arg2 arg3: (NSDictionary<NSNumber *, NSString *> *) arg3 arg4: (ThriftTestNumberz) arg4 arg5: (ThriftTestUserId) arg5 error: (NSError *__autoreleasing *)__thriftError {
+	return nil;
+}
 
-  server = g_object_new (THRIFT_TYPE_SIMPLE_SERVER,
-                         "processor",                processor,
-                         "server_transport",         server_transport,
-                         "input_transport_factory",  transport_factory,
-                         "output_transport_factory", transport_factory,
-                         "input_protocol_factory",   protocol_factory,
-                         "output_protocol_factory",  protocol_factory,
-                         NULL);
+- (BOOL) testException: (NSString *) arg error: (NSError *__autoreleasing *)__thriftError {
+	return NO;
+}
 
-  /* Install our SIGINT handler, which handles Ctrl-C being pressed by stopping
-     the server gracefully */
-  memset (&sigint_action, 0, sizeof (sigint_action));
-  sigint_action.sa_handler = sigint_handler;
-  sigint_action.sa_flags = SA_RESETHAND;
-  sigaction (SIGINT, &sigint_action, NULL);
+- (ThriftTestXtruct *) testMultiException: (NSString *) arg0 arg1: (NSString *) arg1 error: (NSError *__autoreleasing *)__thriftError {
+	return nil;
+}
 
-  printf ("Starting \"%s\" server (%s/%s) listen on: %d\n",
-          server_name,
-          transport_name,
-          protocol_name,
-          port);
-  fflush (stdout);
+- (BOOL) testOneway: (SInt32) secondsToSleep error: (NSError *__autoreleasing *)__thriftError {
+	return NO;
+}
 
-  /* Serve clients until SIGINT is received (Ctrl-C is pressed) */
-  thrift_server_serve (server, &error);
+@end
 
-  /* If the server stopped for any reason other than being interrupted by the
-     user, report the error */
-  if (!sigint_received) {
-    g_message ("thrift_server_serve: %s",
-               error != NULL ? error->message : "(null)");
-    g_clear_error (&error);
-  }
+@interface App : NSObject
 
-  puts ("done.");
+@property NSString *protocol;
+@property NSString *transport;
+@property int port;
+@property NSString *path;
+@property TSocketServer *server;
 
-  g_object_unref (server);
-  g_object_unref (protocol_factory);
-  g_object_unref (transport_factory);
-  g_object_unref (server_transport);
-  g_object_unref (processor);
-  g_object_unref (handler);
-  if(handler_second_service){
-      g_object_unref (handler_second_service);
-  }
-  if(processor_test){
-      g_object_unref (processor_test);
-  }
-  if(processor_second_service){
-      g_object_unref (processor_second_service);
-  }
+@end
 
-  return 0;
-#endif
+@implementation App
+
+- (BOOL)parseArgs:(int)argc argv:(char **)argv {
+	// Configure and parse the command-line options
+	const struct option long_options[] = {
+		{"protocol", required_argument, NULL, 'p'},
+		{"transport", required_argument, NULL, 't'},
+		{"port", required_argument, NULL, 'r'},
+		{"domain-path", required_argument, NULL, 'd'},
+		{NULL, 0, NULL, 0},
+	};
+
+	int ch;
+	while ((ch = getopt_long(argc, argv, "p:t:r:d:", long_options, NULL)) != -1) {
+		switch(ch) {
+			case 'p':
+				self.protocol = [[NSString alloc] initWithUTF8String:optarg];
+				break;
+			case 't':
+				self.transport = [[NSString alloc] initWithUTF8String:optarg];
+				break;
+			case 'r':
+				self.port = atoi(optarg);
+				break;
+			case 'd':
+				self.path = [[NSString alloc] initWithUTF8String:optarg];
+				break;
+			default:
+				break;
+		}
+	}
+
+	printf("Protocol:  %s\n", self.protocol.UTF8String);
+	printf("Transport: %s\n", self.transport.UTF8String);
+	printf("Port:      %d\n", self.port);
+	printf("Path:      %s\n", self.path.UTF8String);
+
+	if (![self.protocol isEqualToString:@"binary"]) {
+		NSLog(@"Unknown protocol type %@", self.protocol);
+		return NO;
+	}
+
+	if (![self.transport isEqualToString:@"buffered"]) {
+		NSLog(@"Unknown transport type %@", self.transport);
+		return NO;
+	}
+
+	return YES;
+}
+
+- (int)main:(int)argc argv:(char **)argv {
+	if (![self parseArgs:argc argv:argv]) {
+		return EXIT_FAILURE;
+	}
+
+	Service *service = [[Service alloc] init];
+	ThriftTestThriftTestProcessor *processor = [[ThriftTestThriftTestProcessor alloc] initWithThriftTest:service];
+	TSharedProcessorFactory *processorFactory = [[TSharedProcessorFactory alloc] initWithSharedProcessor:processor];
+	id<TProtocolFactory> protocolFactory;
+	if ([self.protocol isEqualToString:@"binary"]) {
+		protocolFactory = [[TBinaryProtocolFactory alloc] init];
+	}
+	if (self.path) {
+		NSLog(@"Starting server (%@/%@) listen on: %@",
+			self.transport,
+			self.protocol,
+			self.path);
+		self.server = [[TSocketServer alloc] initWithPath:self.path protocolFactory:protocolFactory processorFactory:processorFactory];
+	} else {
+		NSLog(@"Starting server (%@/%@) listen on: %d\n",
+			self.transport,
+			self.protocol,
+			self.port);
+		self.server = [[TSocketServer alloc] initWithPort:self.port protocolFactory:protocolFactory processorFactory:processorFactory];
+	}
+
+	[NSRunLoop.currentRunLoop run];
+
+	return EXIT_SUCCESS;
+}
+
+@end
+
+int main(int argc, char **argv) {
+	App *app = [[App alloc] init];
+	return [app main:argc argv:argv];
 }

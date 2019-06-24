@@ -28,13 +28,20 @@ TestServer_SOURCES = \
 	gen-cocoa/ThriftTestThriftTest.m \
 	$(top_srcdir)/lib/cocoa/src/TApplicationError.m \
 	$(top_srcdir)/lib/cocoa/src/TBaseClient.m \
+	$(top_srcdir)/lib/cocoa/src/TSharedProcessorFactory.m \
+	$(top_srcdir)/lib/cocoa/src/protocol/TBinaryProtocol.m \
 	$(top_srcdir)/lib/cocoa/src/protocol/TProtocolError.m \
-	$(top_srcdir)/lib/cocoa/src/protocol/TProtocolUtil.m
+	$(top_srcdir)/lib/cocoa/src/protocol/TProtocolUtil.m \
+	$(top_srcdir)/lib/cocoa/src/server/TSocketServer.m \
+	$(top_srcdir)/lib/cocoa/src/transport/TNSFileHandleTransport.m \
+	$(top_srcdir)/lib/cocoa/src/transport/TTransportError.m
 
 gen-cocoa/ThriftTestThriftTest.m gen-cocoa/ThriftTestThriftTest.h: $(top_srcdir)/test/ThriftTest.thrift $(THRIFT)
 	$(THRIFT) --gen cocoa -r $<
 
 AM_CPPFLAGS = -Wall -Wextra \
+	-fobjc-arc \
+	-mmacosx-version-min=10.11 \
 	-Igen-cocoa \
 	-I$(top_srcdir)/lib/cocoa/src \
 	-I$(top_srcdir)/lib/cocoa/src/protocol \

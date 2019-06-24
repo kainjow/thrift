@@ -49,7 +49,7 @@ NSString *const TSockerServerTransportKey = @"TSockerServerTransport";
 
 -(instancetype) initWithSocket:(CFSocketRef)socket
              protocolFactory:(id <TProtocolFactory>)protocolFactory
-            processorFactory:(id <TProcessorFactory>)processorFactory;
+            processorFactory:(id <TProcessorFactory>)processorFactory
 {
   self = [super init];
 
@@ -219,10 +219,14 @@ NSString *const TSockerServerTransportKey = @"TSockerServerTransport";
     id <TProtocol> inProtocol = [_inputProtocolFactory newProtocolOnTransport:transport];
     id <TProtocol> outProtocol = [_outputProtocolFactory newProtocolOnTransport:transport];
 
-    NSError *error;
-    if (![processor processOnInputProtocol:inProtocol outputProtocol:outProtocol error:&error]) {
-      // Handle error
-      NSLog(@"Error processing request: %@", error);
+    for (;;) {
+        @autoreleasepool {
+            NSError *error;
+            if (![processor processOnInputProtocol:inProtocol outputProtocol:outProtocol error:&error]) {
+                NSLog(@"Error processing request: %@", error);
+                break;
+            }
+        }
     }
 
     dispatch_async(dispatch_get_main_queue(), ^{

@@ -20,6 +20,7 @@
 #import "TSocketServer.h"
 #import "TSharedProcessorFactory.h"
 #import "TBinaryProtocol.h"
+#import "TApplicationError.h"
 
 #include "../gen-cocoa/ThriftTestThriftTest.h"
 
@@ -129,13 +130,14 @@
 }
 
 - (BOOL) testException: (NSString *) arg error: (NSError *__autoreleasing *)__thriftError {
-	NSLog(@"%s", __PRETTY_FUNCTION__);
+	NSLog(@"%s: %@", __PRETTY_FUNCTION__, arg);
 	if ([arg isEqualToString:@"Xception"]) {
 		*__thriftError = [[ThriftTestXception alloc] initWithErrorCode:1001 message:arg];
 	} else if ([arg isEqualToString:@"TException"]) {
-		*__thriftError = [NSError errorWithDomain:TErrorDomain code:1001 userInfo:nil];
+		*__thriftError = [[ThriftTestXception alloc] initWithErrorCode:1001 message:arg];
+		//*__thriftError = [NSError errorWithType:TApplicationErrorUnknownMethod reason:arg];
 	}
-	return NO;
+	return YES;
 }
 
 - (ThriftTestXtruct *) testMultiException: (NSString *) arg0 arg1: (NSString *) arg1 error: (NSError *__autoreleasing *)__thriftError {

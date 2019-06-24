@@ -27,6 +27,7 @@ NSString *TApplicationErrorDomain = @"TApplicationErrorDomain";
 NSString *TApplicationErrorNameKey = @"name";
 NSString *TApplicationErrorReasonKey = @"reason";
 NSString *TApplicationErrorMethodKey = @"method";
+NSString *TApplicationErrorMessage = @"message";
 
 
 @implementation NSError (TApplicationError)
@@ -39,6 +40,19 @@ NSString *TApplicationErrorMethodKey = @"method";
 -(NSString *) name
 {
   return self.userInfo[TApplicationErrorNameKey];
+}
+
+-(NSString *) message
+{
+  return self.userInfo[TApplicationErrorMessage];
+}
+
++(instancetype) errorWithMessage:(NSString *)message
+{
+  NSDictionary *userInfo = @{TApplicationErrorMessage:message};
+  return [NSError errorWithDomain:TApplicationErrorDomain
+                             code:TApplicationErrorUnknown
+                         userInfo:userInfo];
 }
 
 +(instancetype) errorWithType:(TApplicationError)type reason:(NSString *)reason
@@ -184,7 +198,7 @@ NSString *TApplicationErrorMethodKey = @"method";
     return NO;
   }
 
-  if (self.localizedDescription != nil) {
+  if (self.message != nil) {
     if (![protocol writeFieldBeginWithName:@"message"
                                       type:TTypeSTRING
                                    fieldID:1 error:error])
@@ -192,7 +206,7 @@ NSString *TApplicationErrorMethodKey = @"method";
       return NO;
     }
 
-    if (![protocol writeString:self.localizedDescription error:error]) {
+    if (![protocol writeString:self.message error:error]) {
       return NO;
     }
 

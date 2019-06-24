@@ -13,8 +13,7 @@
       ]
     },
     "transports": [
-      "buffered",
-      "framed"
+      "buffered"
     ],
     "sockets": [
       "ip"

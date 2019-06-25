@@ -206,7 +206,11 @@ NSString *TApplicationErrorMessage = @"message";
       return NO;
     }
 
-    if (![protocol writeString:self.message error:error]) {
+    NSString *msg = self.message ? self.message : self.localizedDescription;
+    if (!msg) {
+      msg = @"";
+    }
+    if (![protocol writeString:msg error:error]) {
       return NO;
     }
 

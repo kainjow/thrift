@@ -134,14 +134,20 @@
 	if ([arg isEqualToString:@"Xception"]) {
 		*__thriftError = [[ThriftTestXception alloc] initWithErrorCode:1001 message:arg];
 	} else if ([arg isEqualToString:@"TException"]) {
-		*__thriftError = [[ThriftTestXception alloc] initWithErrorCode:1001 message:arg];
-		//*__thriftError = [NSError errorWithType:TApplicationErrorUnknownMethod reason:arg];
+		*__thriftError = [NSError errorWithMessage:arg];
 	}
 	return YES;
 }
 
 - (ThriftTestXtruct *) testMultiException: (NSString *) arg0 arg1: (NSString *) arg1 error: (NSError *__autoreleasing *)__thriftError {
 	NSLog(@"%s", __PRETTY_FUNCTION__);
+	if ([arg0 isEqualToString:@"Xception"]) {
+		*__thriftError = [[ThriftTestXception alloc] initWithErrorCode:1001 message:@"This is an Xception"];
+	} else if ([arg0 isEqualToString:@"Xception2"]) {
+		ThriftTestXtruct *struct_thing = [[ThriftTestXtruct alloc] init];
+		struct_thing.string_thing = @"This is an Xception2";
+		*__thriftError = [[ThriftTestXception2 alloc] initWithErrorCode:2002 struct_thing:struct_thing];
+	}
 	return [[ThriftTestXtruct alloc] initWithString_thing:arg1 byte_thing:0 i32_thing:0 i64_thing:0];
 }
 

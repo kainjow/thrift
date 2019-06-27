@@ -115,7 +115,20 @@
 
 - (NSDictionary<NSNumber *, NSDictionary<NSNumber *, NSNumber *> *> *) testMapMap: (SInt32) hello error: (NSError *__autoreleasing *)__thriftError {
 	NSLog(@"%s", __PRETTY_FUNCTION__);
-	NSMutableDictionary<NSNumber *, NSDictionary *> *result = @{};//@{-4 => {-4 => -4, -3 => -3, -2 => -2, -1 => -1, }, 4 => {1 => 1, 2 => 2, 3 => 3, 4 => 4, }, }
+	NSDictionary<NSNumber *, NSDictionary<NSNumber *, NSNumber *> *> *result = @{
+		@(-4): @{
+			@(-4): @(-4),
+			@(-3): @(-3),
+			@(-2): @(-2),
+			@(-1): @(-1),
+		},
+		@(4): @{
+			@(1): @(1),
+			@(2): @(2),
+			@(3): @(3),
+			@(4): @(4),
+		},
+	};
 	return result;
 }
 

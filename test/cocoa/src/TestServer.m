@@ -20,6 +20,7 @@
 #import "TSocketServer.h"
 #import "TSharedProcessorFactory.h"
 #import "TBinaryProtocol.h"
+#import "TCompactProtocol.h"
 #import "TApplicationError.h"
 
 #include "../gen-cocoa/ThriftTestThriftTest.h"
@@ -228,7 +229,12 @@
 	printf("Port:      %d\n", self.port);
 	printf("Path:      %s\n", self.path.UTF8String);
 
-	if (![self.protocol isEqualToString:@"binary"]) {
+	NSSet<NSString *> *supportedProtocols = [NSSet setWithObjects:
+		@"binary",
+		@"compact",
+		nil
+	];
+	if (![supportedProtocols containsObject:self.protocol]) {
 		NSLog(@"Unknown protocol type %@", self.protocol);
 		return NO;
 	}
@@ -249,9 +255,11 @@
 	Service *service = [[Service alloc] init];
 	ThriftTestThriftTestProcessor *processor = [[ThriftTestThriftTestProcessor alloc] initWithThriftTest:service];
 	TSharedProcessorFactory *processorFactory = [[TSharedProcessorFactory alloc] initWithSharedProcessor:processor];
-	id<TProtocolFactory> protocolFactory;
+	id<TProtocolFactory> protocolFactory = nil;
 	if ([self.protocol isEqualToString:@"binary"]) {
 		protocolFactory = [[TBinaryProtocolFactory alloc] init];
+	} else if ([self.protocol isEqualToString:@"compact"]) {
+		protocolFactory = [[TCompactProtocolFactory alloc] init];
 	}
 	if (self.path) {
 		NSLog(@"Starting server (%@/%@) listen on: %@",

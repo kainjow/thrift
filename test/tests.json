@@ -9,7 +9,8 @@
         "TestServer"
       ],
       "protocols": [
-        "binary"
+        "binary",
+        "compact"
       ]
     },
     "transports": [

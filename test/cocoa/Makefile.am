@@ -31,6 +31,7 @@ TestServer_SOURCES = \
 	$(top_srcdir)/lib/cocoa/src/TError.m \
 	$(top_srcdir)/lib/cocoa/src/TSharedProcessorFactory.m \
 	$(top_srcdir)/lib/cocoa/src/protocol/TBinaryProtocol.m \
+	$(top_srcdir)/lib/cocoa/src/protocol/TCompactProtocol.m \
 	$(top_srcdir)/lib/cocoa/src/protocol/TProtocolError.m \
 	$(top_srcdir)/lib/cocoa/src/protocol/TProtocolUtil.m \
 	$(top_srcdir)/lib/cocoa/src/server/TSocketServer.m \

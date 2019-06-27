@@ -134,7 +134,16 @@
 
 - (NSDictionary<NSNumber *, NSDictionary<NSNumber *, ThriftTestInsanity *> *> *) testInsanity: (ThriftTestInsanity *) argument error: (NSError *__autoreleasing *)__thriftError {
 	NSLog(@"%s", __PRETTY_FUNCTION__);
-	return @{};
+	NSDictionary<NSNumber *, NSDictionary<NSNumber *, ThriftTestInsanity *> *> *result = @{
+		@(1): @{
+			@(2): argument,
+			@(3): argument,
+		},
+		@(2): @{
+			@(6): [[ThriftTestInsanity alloc] init],
+		},
+	};
+	return result;
 }
 
 - (ThriftTestXtruct *) testMulti: (SInt8) arg0 arg1: (SInt32) arg1 arg2: (SInt64) arg2 arg3: (NSDictionary<NSNumber *, NSString *> *) arg3 arg4: (ThriftTestNumberz) arg4 arg5: (ThriftTestUserId) arg5 error: (NSError *__autoreleasing *)__thriftError {

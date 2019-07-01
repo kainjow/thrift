@@ -38,6 +38,7 @@ NSString *const TSockerServerTransportKey = @"TSockerServerTransport";
 @property(strong, nonatomic) id<TProtocolFactory> inputProtocolFactory;
 @property(strong, nonatomic) id<TProtocolFactory> outputProtocolFactory;
 @property(strong, nonatomic) id<TProcessorFactory> processorFactory;
+@property(nullable, strong, nonatomic) id<TTransportFactory> transportFactory;
 @property(strong, nonatomic) NSFileHandle *socketFileHandle;
 @property(strong, nonatomic) dispatch_queue_t processingQueue;
 @property(strong, nonatomic) NSString *domainSocketPath;
@@ -50,12 +51,14 @@ NSString *const TSockerServerTransportKey = @"TSockerServerTransport";
 -(instancetype) initWithSocket:(CFSocketRef)socket
              protocolFactory:(id <TProtocolFactory>)protocolFactory
             processorFactory:(id <TProcessorFactory>)processorFactory
+            transportFactory:(id <TTransportFactory>)transportFactory
 {
   self = [super init];
 
   _inputProtocolFactory = protocolFactory;
   _outputProtocolFactory = protocolFactory;
   _processorFactory = processorFactory;
+  _transportFactory = transportFactory;
 
   dispatch_queue_attr_t processingQueueAttr =
     dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_CONCURRENT, QOS_CLASS_BACKGROUND, 0);
@@ -85,16 +88,17 @@ NSString *const TSockerServerTransportKey = @"TSockerServerTransport";
   return self;
 }
 
-- (id) initWithPort: (int) port
-    protocolFactory: (id <TProtocolFactory>) protocolFactory
-   processorFactory: (id <TProcessorFactory>) processorFactory
+- (id) initWithPort:(int) port
+    protocolFactory:(id <TProtocolFactory>)protocolFactory
+   processorFactory:(id <TProcessorFactory>)processorFactory
+   transportFactory:(id <TTransportFactory>)transportFactory
 {
   CFSocketRef socket = [[self class] createSocketWithPort:port];
   if (socket == NULL) {
     return nil;
   }
 
-  if (self = [self initWithSocket:socket protocolFactory:protocolFactory processorFactory:processorFactory]) {
+  if (self = [self initWithSocket:socket protocolFactory:protocolFactory processorFactory:processorFactory transportFactory:transportFactory]) {
     NSLog(@"TSocketServer: Listening on TCP port %d", port);
   }
   return self;
@@ -132,9 +136,10 @@ NSString *const TSockerServerTransportKey = @"TSockerServerTransport";
   }
 }
 
-- (id) initWithPath: (NSString *) path
-    protocolFactory: (id <TProtocolFactory>) protocolFactory
-   processorFactory: (id <TProcessorFactory>) processorFactory
+- (id) initWithPath:(NSString *)path
+    protocolFactory:(id <TProtocolFactory>)protocolFactory
+   processorFactory:(id <TProcessorFactory>)processorFactory
+   transportFactory:(id <TTransportFactory>)transportFactory
 {
   _domainSocketPath = path;
   CFSocketRef socket = [[self class] createSocketWithPath:path];
@@ -142,7 +147,7 @@ NSString *const TSockerServerTransportKey = @"TSockerServerTransport";
     return nil;
   }
 
-  if (self = [self initWithSocket:socket protocolFactory:protocolFactory processorFactory:processorFactory]) {
+  if (self = [self initWithSocket:socket protocolFactory:protocolFactory processorFactory:processorFactory transportFactory:transportFactory]) {
     NSLog(@"TSocketServer: Listening on path %@", path);
   }
   return self;
@@ -213,7 +218,8 @@ NSString *const TSockerServerTransportKey = @"TSockerServerTransport";
 {
   @autoreleasepool {
 
-    TNSFileHandleTransport *transport = [[TNSFileHandleTransport alloc] initWithFileHandle:clientSocket];
+    TNSFileHandleTransport *fileTransport = [[TNSFileHandleTransport alloc] initWithFileHandle:clientSocket];
+    id<TTransport> transport = _transportFactory ? [_transportFactory transportForTransport:fileTransport] : fileTransport;
     id<TProcessor> processor = [_processorFactory processorForTransport:transport];
 
     id <TProtocol> inProtocol = [_inputProtocolFactory newProtocolOnTransport:transport];

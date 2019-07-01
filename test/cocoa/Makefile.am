@@ -36,7 +36,8 @@ TestServer_SOURCES = \
 	$(top_srcdir)/lib/cocoa/src/protocol/TProtocolUtil.m \
 	$(top_srcdir)/lib/cocoa/src/server/TSocketServer.m \
 	$(top_srcdir)/lib/cocoa/src/transport/TNSFileHandleTransport.m \
-	$(top_srcdir)/lib/cocoa/src/transport/TTransportError.m
+	$(top_srcdir)/lib/cocoa/src/transport/TTransportError.m \
+	$(top_srcdir)/lib/cocoa/src/transport/TFramedTransport.m
 
 gen-cocoa/ThriftTestThriftTest.m gen-cocoa/ThriftTestThriftTest.h: $(top_srcdir)/test/ThriftTest.thrift $(THRIFT)
 	$(THRIFT) --gen cocoa -r $<

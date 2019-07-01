@@ -22,6 +22,7 @@
 #import "TBinaryProtocol.h"
 #import "TCompactProtocol.h"
 #import "TApplicationError.h"
+#import "TFramedTransport.h"
 
 #include "../gen-cocoa/ThriftTestThriftTest.h"
 
@@ -239,7 +240,12 @@
 		return NO;
 	}
 
-	if (![self.transport isEqualToString:@"buffered"]) {
+	NSSet<NSString *> *supportedTransports = [NSSet setWithObjects:
+		@"buffered",
+		@"framed",
+		nil
+	];
+	if (![supportedTransports containsObject:self.transport]) {
 		NSLog(@"Unknown transport type %@", self.transport);
 		return NO;
 	}
@@ -256,23 +262,33 @@
 	ThriftTestThriftTestProcessor *processor = [[ThriftTestThriftTestProcessor alloc] initWithThriftTest:service];
 	TSharedProcessorFactory *processorFactory = [[TSharedProcessorFactory alloc] initWithSharedProcessor:processor];
 	id<TProtocolFactory> protocolFactory = nil;
+	id<TTransportFactory> transportFactory = nil;
 	if ([self.protocol isEqualToString:@"binary"]) {
 		protocolFactory = [[TBinaryProtocolFactory alloc] init];
 	} else if ([self.protocol isEqualToString:@"compact"]) {
 		protocolFactory = [[TCompactProtocolFactory alloc] init];
+	}
+	if ([self.transport isEqualToString:@"framed"]) {
+		transportFactory = [[TFramedTransportFactory alloc] init];
 	}
 	if (self.path) {
 		NSLog(@"Starting server (%@/%@) listen on: %@",
 			self.transport,
 			self.protocol,
 			self.path);
-		self.server = [[TSocketServer alloc] initWithPath:self.path protocolFactory:protocolFactory processorFactory:processorFactory];
+		self.server = [[TSocketServer alloc] initWithPath:self.path
+		                                  protocolFactory:protocolFactory
+		                                 processorFactory:processorFactory
+		                                 transportFactory:transportFactory];
 	} else {
 		NSLog(@"Starting server (%@/%@) listen on: %d\n",
 			self.transport,
 			self.protocol,
 			self.port);
-		self.server = [[TSocketServer alloc] initWithPort:self.port protocolFactory:protocolFactory processorFactory:processorFactory];
+		self.server = [[TSocketServer alloc] initWithPort:self.port
+		                                  protocolFactory:protocolFactory
+		                                 processorFactory:processorFactory
+		                                 transportFactory:transportFactory];
 	}
 
 	[NSRunLoop.currentRunLoop run];

@@ -20,6 +20,7 @@
 #import <Foundation/Foundation.h>
 #import "TProtocolFactory.h"
 #import "TProcessorFactory.h"
+#import "TTransportFactory.h"
 
 #if !TARGET_OS_IPHONE
 #import <CoreServices/CoreServices.h>
@@ -39,11 +40,13 @@ extern NSString *const TSockerServerTransportKey;
 
 -(instancetype) initWithPort:(int)port
              protocolFactory:(id <TProtocolFactory>)protocolFactory
-            processorFactory:(id <TProcessorFactory>)processorFactory;
+            processorFactory:(id <TProcessorFactory>)processorFactory
+            transportFactory:(nullable id <TTransportFactory>)transportFactory;
 
-- (instancetype) initWithPath: (NSString *) path
-              protocolFactory: (id <TProtocolFactory>) protocolFactory
-             processorFactory: (id <TProcessorFactory>) processorFactory;
+- (instancetype) initWithPath:(NSString *)path
+              protocolFactory:(id <TProtocolFactory>)protocolFactory
+             processorFactory:(id <TProcessorFactory>)processorFactory
+             transportFactory:(nullable id <TTransportFactory>)transportFactory;
 
 @end
 

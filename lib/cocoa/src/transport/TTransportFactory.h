@@ -19,19 +19,15 @@
 
 #import <Foundation/Foundation.h>
 #import "TTransport.h"
-#import "TTransportFactory.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 
-@interface TFramedTransport : NSObject <TTransport>
+@protocol TTransportFactory <NSObject>
 
--(id) initWithTransport:(id <TTransport>)transport;
-
-@end
-
-@interface TFramedTransportFactory : NSObject <TTransportFactory>
+-(id<TTransport>) transportForTransport:(id<TTransport>)transport;
 
 @end
+
 
 NS_ASSUME_NONNULL_END

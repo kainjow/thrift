@@ -178,3 +178,12 @@
 }
 
 @end
+
+
+@implementation TFramedTransportFactory
+
+- (id<TTransport>)transportForTransport:(id<TTransport>)transport {
+  return [[TFramedTransport alloc] initWithTransport:transport];
+}
+
+@end

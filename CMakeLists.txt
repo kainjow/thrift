@@ -103,6 +103,10 @@ if(BUILD_C_GLIB)
     add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/lib/c_glib)
 endif()
 
+if(WITH_COCOA)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/lib/cocoa)
+endif()
+
 if(BUILD_JAVA)
     add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/lib/java)
 endif()

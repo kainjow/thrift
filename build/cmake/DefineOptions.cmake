@@ -120,6 +120,13 @@ elseif(BUILD_C_GLIB AND BUILD_TESTING)
     find_package(Boost 1.53 REQUIRED)
 endif()
 
+# Cocoa
+if(APPLE)
+    option(WITH_COCOA "Build Cocoa Thrift library" ON)
+else()
+    option(WITH_COCOA "Build Cocoa Thrift library" OFF)
+endif()
+
 # Java
 option(WITH_JAVA "Build Java Thrift library" ON)
 if(ANDROID)
@@ -187,6 +194,7 @@ message(STATUS "    C++ Language Level:                       ${CXX_LANGUAGE_LEV
 message(STATUS "  Build C (GLib) library:                     ${BUILD_C_GLIB}")
 MESSAGE_DEP(WITH_C_GLIB "Disabled by WITH_C_GLIB=OFF")
 MESSAGE_DEP(GLIB_FOUND "GLib missing")
+message(STATUS "  Build Cocoa library:                        ${WITH_COCOA}")
 message(STATUS "  Build Java library:                         ${BUILD_JAVA}")
 MESSAGE_DEP(WITH_JAVA "Disabled by WITH_JAVA=OFF")
 if(ANDROID)

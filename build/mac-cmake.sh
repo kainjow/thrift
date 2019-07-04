@@ -3,17 +3,16 @@ set -ev
 
 CONFIG=Release
 
-# bison from homebrew
+# bison is keg-only from Homebrew, which means it was not symlinked into /usr/local,
+# so we need to add it to PATH.
 export PATH="/usr/local/opt/bison/bin:${PATH}"
-
-# openssl from homebrew
-export LDFLAGS="-L/usr/local/opt/openssl/lib"
-export CPPFLAGS="-I/usr/local/opt/openssl/include"
 
 mkdir -p cmake_build && cd cmake_build
 cmake -GXcode .. \
-	-DWITH_CPP=OFF \
 	-DWITH_C_GLIB=ON \
+	-DWITH_OPENSSL=ON \
+	-DOPENSSL_ROOT_DIR=/usr/local/opt/openssl \
+	-DWITH_CPP=OFF \
 	-DWITH_JAVA=OFF \
 	-DWITH_PYTHON=OFF
 cmake --build . --config ${CONFIG}

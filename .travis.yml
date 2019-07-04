@@ -93,8 +93,7 @@ jobs:
     - stage: thrift
       script: build/mac-cross-test.sh
       env:
-        - JOB="Cross Language Tests (Binary Protocol, Mac)"
-        - BUILD_ARG="-'(binary)'"
+        - JOB="Cross Language Tests (Mac)"
       os: osx
       osx_image: xcode10.2
       addons:
@@ -157,6 +156,8 @@ jobs:
           packages:
           - bison
           - openssl
+      env:
+        - JOB="CMake (Mac)"
 
     # ------------------------- phase: dist -------------------------
     - script: build/docker/run.sh

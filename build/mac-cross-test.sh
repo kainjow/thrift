@@ -1,9 +1,13 @@
 #!/bin/sh
 set -ev
 
-export PATH="/usr/local/opt/bison/bin:$PATH" # add bison to path
+# bison is keg-only, which means it was not symlinked into /usr/local,
+# so we need to add it to PATH.
+export PATH="/usr/local/opt/bison/bin:$PATH"
+
 export PKG_CONFIG_PATH="/usr/local/opt/libffi/lib/pkgconfig:$PKG_CONFIG_PATH" # so pkg-config finds libffi for gobject-2.0
 export PKG_CONFIG_PATH="/usr/local/opt/openssl/lib/pkgconfig:$PKG_CONFIG_PATH"
+
 ./bootstrap.sh
 ./configure \
 	--with-c_glib \
@@ -36,7 +40,7 @@ export PKG_CONFIG_PATH="/usr/local/opt/openssl/lib/pkgconfig:$PKG_CONFIG_PATH"
 make -j$(sysctl -n hw.ncpu) precross CPPFLAGS="-I/usr/local/opt/openssl/include"
 
 set +e
-make cross$1
+make cross PYTHON=$(which python3)
 
 RET=$?
 if [ $RET -ne 0 ]; then

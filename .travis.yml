@@ -22,9 +22,10 @@
 #
 # Docker Integration
 # see: build/docker/README.md
-# 
+#
 
 sudo: required
+os: linux
 dist: trusty
 language: cpp
 
@@ -89,6 +90,24 @@ jobs:
         - SCRIPT="cross-test.sh"
         - BUILD_ARG="-'(compact|multiplexed)'"
 
+    - stage: thrift
+      script: build/mac-cross-test.sh
+      env:
+        - JOB="Cross Language Tests (Binary Protocol, Mac)"
+        - BUILD_ARG="-'(binary)'"
+      os: osx
+      osx_image: xcode10.2
+      addons:
+        homebrew:
+          packages:
+          - python3
+          - libtool
+          - automake
+          - bison
+          - pkg-config
+          - glib
+          - openssl
+
     # ------------------------- phase: sca --------------------------
     # QA jobs for code analytics and metrics
     - stage: thrift
@@ -130,6 +149,15 @@ jobs:
         - JOB="CMake"
         - BUILD_ARG="-DCMAKE_BUILD_TYPE=Release"
 
+    - os: osx
+      osx_image: xcode10.2
+      script: build/mac-cmake.sh
+      addons:
+        homebrew:
+          packages:
+          - bison
+          - openssl
+
     # ------------------------- phase: dist -------------------------
     - script: build/docker/run.sh
       env:
@@ -148,11 +176,3 @@ jobs:
       env:
         - JOB="Coverity Scan"
         - SCRIPT="covscan.sh"
-     
-
-  ### ------------------------- phase: osx --------------------------
-  # disabled due to the time delays it imposes on build jobs
-  # - os: osx
-  #   osx_image: xcode9
-  #   script: build/docker/scripts/autotools.sh
-

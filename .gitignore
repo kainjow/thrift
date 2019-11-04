@@ -222,13 +222,13 @@ project.lock.json
 /lib/erl/test/*.beam
 /lib/erl/test/*.hrl
 /lib/erl/test/Thrift_omit_without.thrift
-/lib/erl/rebar.lock
 /lib/haxe/test/bin
 /lib/haxe/test/data.tmp
 /lib/hs/dist
 /lib/java/.gradle
 /lib/java/android/.gradle
 /lib/java/build
+/lib/java/out
 /lib/java/target
 /lib/js/dist
 /lib/js/doc
@@ -269,6 +269,7 @@ project.lock.json
 /lib/php/src/ext/thrift_protocol/mkinstalldirs
 /lib/php/src/ext/thrift_protocol/modules/
 /lib/php/src/ext/thrift_protocol/php_thrift_protocol.lo
+/lib/php/src/ext/thrift_protocol/php_thrift_protocol.loT
 /lib/php/src/ext/thrift_protocol/run-tests.php
 /lib/php/src/ext/thrift_protocol/thrift_protocol.la
 /lib/php/src/ext/thrift_protocol/tmp-php.ini
@@ -323,6 +324,8 @@ project.lock.json
 /test/erl/.generated
 /test/erl/.rebar
 /test/erl/ebin
+/test/erl/_build/
+/test/erl/rebar.lock
 /test/go/bin/
 /test/go/ThriftTest.thrift
 /test/go/gopath
